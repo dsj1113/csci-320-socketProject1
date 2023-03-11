@@ -53,7 +53,7 @@ def send_file(filename: str):
             # read the file in chunks and send each chunk to the server
             # TODO: section 2 step 8 a-d in README.md file
             while True:
-                # read a chunk of data from the file
+
                 chunk = file.read(4096)
                 if len(chunk) > 0:
                     chash_sha256.update(chunk)
