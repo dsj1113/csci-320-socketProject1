@@ -30,11 +30,11 @@ def upload_file(server_socket: socket, file_name: str, file_size: int):
         #readable_hash = hashlib.sha256(read).hexdigest()
         #print(readable_hash)
 
-        hash_sha256 = hashlib.sha256()
-        with open(file_name, "rb") as f:
+    hash_sha256 = hashlib.sha256()
+    with open(file_name, "rb") as f:
             for chunk in iter(lambda: f.read(4096), b""):
                 hash_sha256.update(chunk)
-        return hash_sha256.hexdigest()
+            return hash_sha256.hexdigest()
 
     # create a new file to store the received data
     with open(file_name+'.temp', 'wb') as file:
@@ -57,16 +57,16 @@ def upload_file(server_socket: socket, file_name: str, file_size: int):
     # TODO: section 1 step 8 in README.md file
     # TODO: section 1 step 9 in README.md file
 
-if client_hash == hash_sha256:
+    if client_hash == hash_sha256:
     # Hashes are the same, send a 'success' message to the client
-    sever.sendto(b'success', address)
-else:
+        sever.sendto(b'success', address)
+    else:
     # Hashes are different, remove the file and send a 'failed' message to the client
-    os.remove(file_name + ".temp")
-    sever.sendto(b'failed', address)
+        os.remove(file_name + ".temp")
+        sever.sendto(b'failed', address)
 
 # Close the socket
-sock.close()
+    socket.close()
 
 
 def start_server():

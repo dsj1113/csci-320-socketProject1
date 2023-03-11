@@ -22,10 +22,11 @@ def get_file_size(file_name: str) -> int:
 def send_file(filename: str):
     # get the file size in bytes
     # TODO: section 2 step 2 in README.md file
+    size = os.path.getsize(filename)
 
     # convert the file size to an 8-byte byte string using big endian
     # TODO: section 2 step 3 in README.md file
-    size = len(filename).to_bytes(8, byteorder='big')
+    sizee = size.to_bytes(8, byteorder='big')
     # create a SHA256 object to generate hash of file
     # TODO: section 2 step 4 in README.md file
     chash_sha256 = hashlib.sha256()
@@ -40,20 +41,34 @@ def send_file(filename: str):
         # send the file size in the first 8-bytes followed by the bytes
         # for the file name to server at (IP, PORT)
         # TODO: section 2 step 6 in README.md file
+        server_address = ('localhost', 12000)
 
+        client_socket.sendto(size_bytes + filename.encode(), server_address)
         # TODO: section 2 step 7 in README.md file
-
+        data, server_address = client_socket.recvfrom(1024)
+        if data != b'go ahead':
+            raise Exception('Bad server response - was not go ahead!')
         # open the file to be transferred
         with open(file_name, 'rb') as file:
             # read the file in chunks and send each chunk to the server
             # TODO: section 2 step 8 a-d in README.md file
-            pass  # replace this line with your code
+            pass
+            chunk = file.read(4096)
+            if not chunk:
+                break
+                chash_sha256.update(chunk)
+
+                client_socket.sendto(chunk, server_address)
 
         # send the hash value so server can verify that the file was
         # received correctly.
         # TODO: section 2 step 9 in README.md file
-
+        client_hash = chash_sha256.hexdigest()
+        client_socket.sendto(client_hash.encode(), server_address)
         # TODO: section 2 steps 10 in README.md file
+        data, server_address = client_socket.recvfrom(1024)
+        if data != b'OK':
+            raise Exception('Bad server response - was not OK!')
 
         # TODO: section 2 step 11 in README.md file
     except Exception as e:
