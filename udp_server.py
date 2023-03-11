@@ -42,10 +42,9 @@ def upload_file(server_socket: socket, file_name: str, file_size: int):
         pass
         data, address = server_socket.recvfrom(4096)
 
-        # write the data to the file
+
         f.write(data)
 
-        # update the sha256 hash
         hash_sha256.update(data)
 
         server_socket.sendto(b'received', address)

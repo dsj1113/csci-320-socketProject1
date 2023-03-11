@@ -52,11 +52,18 @@ def send_file(filename: str):
         with open(file_name, 'rb') as file:
             # read the file in chunks and send each chunk to the server
             # TODO: section 2 step 8 a-d in README.md file
-            pass
-            chunk = file.read(4096)
-            if not chunk:
-                break
-                chash_sha256.update(chunk)
+            while True:
+                # read a chunk of data from the file
+                chunk = file.read(4096)
+                if len(chunk) > 0:
+                    chash_sha256.update(chunk)
+
+                    client_socket.sendto(chunk, server_address)
+                    data, _ = client_socket.recvfrom(1024)
+                    if data != b'received':
+                        raise Exception('Bad server response - was not received')
+                else:
+                    break
 
                 client_socket.sendto(chunk, server_address)
 
