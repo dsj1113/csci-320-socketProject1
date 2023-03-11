@@ -25,10 +25,14 @@ def send_file(filename: str):
 
     # convert the file size to an 8-byte byte string using big endian
     # TODO: section 2 step 3 in README.md file
-
+    size = len(filename).to_bytes(8, byteorder='big')
     # create a SHA256 object to generate hash of file
     # TODO: section 2 step 4 in README.md file
-
+    chash_sha256 = hashlib.sha256()
+    with open(file_name, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            chash_sha256.update(chunk)
+    return chash_sha256.hexdigest()
     # create a UDP socket
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
